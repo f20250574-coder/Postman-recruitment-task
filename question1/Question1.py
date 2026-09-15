@@ -23,18 +23,39 @@ def sliding_window_mask(T, window):
 
 def block_space_mask(T,b_size):
 
-    i=torch.arange(T)
-    j=torch.arange(T)
+    token=torch.arange(T)
 
-    i = i.reshape(T//b_size,b_size)
-    j = j.reshape(T//b_size,b_size)
+    block_id=i//b_size
 
-    i=torch.unsqueeze(1)
-    j=torch.unsqueeze(0)
+    i = torch.unsqueeze(block_id,1)
+    j= torch.unsqueeze(block_id,0)
 
-    mask = (j<=i) & (j<=i-window+1)
-    
+    mask = j <= i
+
     return mask
+
+def block_space_mask_Bigbird(T, b_size, window,global_token,num_rand):
+
+    token=torch.arange(T)
+
+    local_mask=sliding_window_mask(T,window)
+
+    i=torch.arange(T).unsqueeze(1)
+    j=torch.arange(T).unsqueeze(0)
+
+    block_id=i//b_size
+
+    global_mask = (i==global_token) | (j==global_token)
+
+    i = torch.unsqueeze(block_id,1)
+    j= torch.unsqueeze(block_id,0)
+
+    random_mask = torch.zeros(T, T, dtype=torch.bool)
+
+
+
+
+
 
 
 
